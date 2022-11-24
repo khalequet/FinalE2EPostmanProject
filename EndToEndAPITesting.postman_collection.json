@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "015a2091-2814-465a-a70c-219dfe29e2cb",
+		"_postman_id": "d12e0394-438e-4d28-b5f0-e0989fd85b2d",
 		"name": "EndToEndAPITesting",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24193626"
 	},
 	"item": [
 		{
@@ -97,7 +98,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstName\" : \"{{FirstName}}\",\n    \"lastName\" : \"{{LastName}}\",\n    \"email\"     : \"{{Email}}\",\n    \"password\"  : \"{{Password}}\",\n    \"confirmPassword\"  : \"{{ConfirmPassword}}\",\n    \"dob\"       : {\n        \"year\"      : {{DOBYear}},\n        \"month\"     : {{DOBMonth}},\n        \"day\"       : {{DOBDay}}\n    },\n    \"gender\"    : \"{{Gender}}\",\n    \"agree\"     : true\n}",
+					"raw": "{\n    \"firstName\" : \"{{FirstName}}\",\n    \"lastName\" : \"{{LastName}}\",\n    \"email\"     : \"{{Email}}\",\n    \"password\"  : \"123456\",\n    \"confirmPassword\"  : \"123456\",\n    \"dob\"       : {\n        \"year\"      : {{DOBYear}},\n        \"month\"     : {{DOBMonth}},\n        \"day\"       : {{DOBDay}}\n    },\n    \"gender\"    : \"{{Gender}}\",\n    \"agree\"     : true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -217,7 +218,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\" : \"{{StudentID}}\",\n    \"password\" : \"{{Password}}\"\n}",
+					"raw": "{\n    \"id\" : \"{{StudentID}}\",\n    \"password\" : \"123456\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -363,7 +364,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"password\"  : \"{{UpdatePassword}}\",\r\n    \"confirmPassword\"  : \"{{UpdateConfirmPassword}}\"\r\n}",
+					"raw": "{\r\n    \"password\"  : \"Candy12!\",\r\n    \"confirmPassword\"  : \"Candy12!\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
