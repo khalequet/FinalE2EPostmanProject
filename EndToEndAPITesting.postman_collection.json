@@ -1,0 +1,447 @@
+{
+	"info": {
+		"_postman_id": "015a2091-2814-465a-a70c-219dfe29e2cb",
+		"name": "EndToEndAPITesting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Student Information",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resData = pm.response.json();",
+							"pm.test(\"verify status code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//Another way of checking the respose code ",
+							"// tests[\"verify Status code\"]=responseCode.code==200;",
+							"// tests[\"verify resposebody\"]=responseBody.has(\"taskin\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}students",
+					"host": [
+						"{{baseURL}}students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1. Signup a new Student",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"FirstName\",pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.environment.set(\"LastName\",pm.variables.replaceIn(\"{{$randomLastName}}\"));",
+							"",
+							"pm.environment.set(\"Email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+							"",
+							"pm.environment.set(\"DOBYear\", _.random(1935,2013));",
+							"pm.environment.set(\"DOBMonth\", _.random(1,12));",
+							"pm.environment.set(\"DOBDay\", _.random(1,28));",
+							"",
+							"var i=_.random(0,1);",
+							"if(i>0){",
+							"    pm.environment.set(\"Gender\",\"male\")",
+							"}else{",
+							"    pm.environment.set(\"Gender\",\"female\")",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test('Verify the status is 201', function(){",
+							"    pm.response.to.have.status(201);",
+							"})",
+							"",
+							"pm.test('Verify that the success is true', function(){",
+							"    pm.expect(responseData.success,\"The request was not successful\").to.be.eq(true)",
+							"})",
+							"",
+							"pm.test('Verify message in response body', function(){",
+							"    pm.expect(responseData.message, \"The message body does not match\").to.be.eq(\"Registration Success\")",
+							"})",
+							"",
+							"pm.environment.set(\"StudentID\", responseData.id);",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\" : \"{{FirstName}}\",\n    \"lastName\" : \"{{LastName}}\",\n    \"email\"     : \"{{Email}}\",\n    \"password\"  : \"{{Password}}\",\n    \"confirmPassword\"  : \"{{ConfirmPassword}}\",\n    \"dob\"       : {\n        \"year\"      : {{DOBYear}},\n        \"month\"     : {{DOBMonth}},\n        \"day\"       : {{DOBDay}}\n    },\n    \"gender\"    : \"{{Gender}}\",\n    \"agree\"     : true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}signup",
+					"host": [
+						"{{baseURL}}signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Verify Student was successfully able to signup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test(\"To verify that the status to be 200\", function(){",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"To verify the message from the respnse body\", function(){",
+							"    pm.expect(responseData.message, \"The response body does not have the correct data\").to.be.eq(\"Student Found\");",
+							"});",
+							"",
+							"pm.test(\"To verify that the first name is correct\", function(){",
+							"    pm.expect(responseData.data.firstName).to.be.eq(pm.environment.get(\"FirstName\"));",
+							"});",
+							"pm.test(\"To verify that the Last name is correct\", function(){",
+							"    pm.expect(responseData.data.lastName).to.be.eq(pm.environment.get(\"LastName\"));",
+							"})",
+							"pm.test(\"To verify that the studentID is correct\", function(){",
+							"    pm.expect(responseData.data.studentId).to.be.eq(pm.environment.get(\"StudentID\"));",
+							"})",
+							"pm.test(\"To verify that the Email is correct\", function(){",
+							"    pm.expect(responseData.data.email).to.be.eq(pm.environment.get(\"Email\"));",
+							"})",
+							"pm.test(\"To verify that the Gender is correct\", function(){",
+							"    pm.expect(responseData.data.gender).to.be.eq(pm.environment.get(\"Gender\"));",
+							"})",
+							"let dobMonth;",
+							"let dobDay;",
+							"pm.test(\"To verify that the date of birth is correct\", function(){",
+							"    if(pm.environment.get(\"DOBMonth\")<10)",
+							"    {",
+							"        dobMonth= \"0\"+pm.environment.get(\"DOBMonth\")",
+							"    }",
+							"    else{",
+							"        dobMonth= pm.environment.get(\"DOBMonth\")",
+							"    }",
+							"    if(pm.environment.get(\"DOBDay\")<10)",
+							"    {",
+							"        dobDay = \"0\"+pm.environment.get(\"DOBDay\")",
+							"    }",
+							"    else{",
+							"        dobDay = pm.environment.get(\"DOBDay\")",
+							"    }",
+							"    pm.expect(responseData.data.dob, \"The date of birth does not match\").to.be.eq(pm.environment.get(\"DOBYear\")+\"-\"+dobMonth+\"-\"+dobDay);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}student/{{StudentID}}",
+					"host": [
+						"{{baseURL}}student"
+					],
+					"path": [
+						"{{StudentID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Verify new student can login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test('Verify the status is 200', function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"pm.test('Verify that the success is true', function(){",
+							"    pm.expect(responseData.success,\"The request was not successful\").to.be.eq(true)",
+							"})",
+							"",
+							"pm.test('Verify message in response body', function(){",
+							"    pm.expect(responseData.message, \"The message body does not match\").to.be.eq(\"Login Success\")",
+							"})",
+							"",
+							"pm.environment.set(\"BearerToken\", responseData.token)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\" : \"{{StudentID}}\",\n    \"password\" : \"{{Password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}login",
+					"host": [
+						"{{baseURL}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Update new student information",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"UpdateFirstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.environment.set(\"UpdateLastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));",
+							"pm.environment.set(\"UpdateEmail\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+							"",
+							"pm.environment.set(\"UpdateDOBYear\", _.random(1935,2013));",
+							"pm.environment.set(\"UpdateDOBDay\", _.random(1,28));",
+							"pm.environment.set(\"UpdateDOBMonth\", _.random(1,12));",
+							"",
+							"var i=_.random(0,1);",
+							"if(i>0){",
+							"    pm.environment.set(\"UpdateGender\",\"male\")",
+							"}else{",
+							"    pm.environment.set(\"UpdateGender\",\"female\")",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"",
+							"pm.test(\"verify status code is 200\",function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"pm.test(\"verify respose body has correct data\",function(){",
+							"pm.expect(res.success).to.be.eq(true)",
+							"pm.expect(res.message).to.be.eq(\"Update success\")",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{BearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\" : \"{{UpdateFirstName}}\",\n    \"lastName\" : \"{{UpdateLastName}}\",\n    \"email\"     : \"{{UpdateEmail}}\",\n    \n    \"dob\"       : {\n        \"year\"      : {{UpdateDOBYear}},\n        \"month\"     : {{UpdateDOBMonth}},\n        \"day\"       : {{UpdateDOBDay}}\n    },\n    \"gender\"    : \"{{UpdateGender}}\",\n    \"agree\"     : true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}student/{{StudentID}}",
+					"host": [
+						"{{baseURL}}student"
+					],
+					"path": [
+						"{{StudentID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Change the password",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const resData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Test responce status code as 200\", function(){\r",
+							" pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Test message is correct\", function(){\r",
+							"    pm.expect(resData.message).to.be.eq(\"Password update success\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Verify success\", function(){\r",
+							"\r",
+							"    pm.expect(resData.success).to.be.eq(true)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{BearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\"  : \"{{UpdatePassword}}\",\r\n    \"confirmPassword\"  : \"{{UpdateConfirmPassword}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}updatePassword/{{StudentID}}",
+					"host": [
+						"{{baseURL}}updatePassword"
+					],
+					"path": [
+						"{{StudentID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Delete the student account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"",
+							"pm.test(\"Verify Status Code is 200\", function(){",
+							"pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"verify success is true\", function(){",
+							"pm.expect(res.success).to.be.eq(true)",
+							"});",
+							"",
+							"pm.test('Verify messages from respose body', function(){",
+							"    pm.expect(res.messages).to.be.eq(\"Data Deleted\")",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{BearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}student/{{StudentID}}",
+					"host": [
+						"{{baseURL}}student"
+					],
+					"path": [
+						"{{StudentID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
